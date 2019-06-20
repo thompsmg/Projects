@@ -18,6 +18,10 @@ type Props = {};
 
 export default class App extends Component<Props> {
 
+  constructor(props) {
+    super(props);
+    this.state = { text: 'Results displayed here' };
+  }
 
 
   takePic(){
@@ -53,8 +57,13 @@ export default class App extends Component<Props> {
       })
       .then((response) => response.json())
     .then((responseJson) => {
-      console.log(responseJson.class);
-      console.log(responseJson.confidence);
+      //console.log(responseJson.class);
+      //console.log(responseJson.confidence);
+      const shoeResults = 'The shoes are: ' + responseJson.class;
+      const confidenceLevel = 'The confidnce level is: ' + (responseJson.confidence * 100).toFixed(2) + '%';
+
+      console.log(shoeResults);
+      console.log(confidenceLevel);
       return responseJson
     })
     .catch((error) => {
@@ -62,12 +71,18 @@ export default class App extends Component<Props> {
     });
 
     return (
+
+
       <View style={styles.container}>
         <Text style={styles.welcome}>Welcome to SneakerWiz!</Text>
         <TouchableOpacity onPress={this.takePic.bind(this)}>
           <Text>Take Picture</Text>
         </TouchableOpacity>
-
+        <TextInput
+                style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+                //onChangeText={(text) => this.setState({text})}
+                value={this.state.text}
+              />
       </View>
     );
   }
