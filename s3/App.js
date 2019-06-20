@@ -44,7 +44,7 @@ export default class App extends Component<Props> {
       })
   }
 
-  render() {  
+  render() {
     fetch('https://z1wj4hjige.execute-api.us-west-2.amazonaws.com/Prod/invocations', {
       method: 'POST',
       body: JSON.stringify({
@@ -54,7 +54,7 @@ export default class App extends Component<Props> {
       .then((response) => response.json())
     .then((responseJson) => {
       console.log(responseJson.class);
-      console.log(responseJson.confidence)
+      console.log(responseJson.confidence);
       return responseJson
     })
     .catch((error) => {
