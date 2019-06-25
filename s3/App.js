@@ -7,7 +7,7 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, TouchableOpacity, View, TextInput} from 'react-native';
+import {Platform, StyleSheet, Text, TouchableOpacity, View, Image, ImageBackground, TextInput} from 'react-native';
 import ImagePicker from 'react-native-image-picker';
 import { RNS3 } from 'react-native-aws3';
 
@@ -15,6 +15,7 @@ import { RNS3 } from 'react-native-aws3';
 
 
 type Props = {};
+const bgImage = 'https://upload.wikimedia.org/wikipedia/commons/d/de/Bananavarieties.jpg';
 
 export default class App extends Component<Props> {
 
@@ -27,9 +28,17 @@ export default class App extends Component<Props> {
     super(props);
     this.state = { text: 'sup',
                     shoePrediction: null,
-                  shoeConfidence: null};
+                  shoeConfidence: null,
+                isLoading: false,
+              showText: false};
   }
 
+  clearText(){
+    this.state = {
+      shoePrediction:null,
+      shoeConfidence:null
+    }
+  }
   runShoePredict(shoe){
       fetch('https://z1wj4hjige.execute-api.us-west-2.amazonaws.com/Prod/invocations', {
       method: 'POST',
@@ -41,13 +50,14 @@ export default class App extends Component<Props> {
     .then((responseJson) => {
       //console.log(responseJson.class);
       //console.log(responseJson.confidence);
-      const shoeFile = {
-        shoeName: responseJson.class,
-        analysisLevel: responseJson.confidence
-      }
+      // const shoeFile = {
+      //   shoeName: responseJson.class,
+      //   analysisLevel: responseJson.confidence
+      // }
       this.setState({
-        shoePrediction: responseJson.class,
-        shoeConfidence: responseJson.confidence
+        isLoading: false,
+        shoePrediction: ('your shoe is the ' + (responseJson.class)),
+        shoeConfidence: (' we are ' + (responseJson.confidence * 100).toFixed(2) + '% confident')
         })
       //  const shoeResults = 'The shoes are: ' + responseJson.class;
       //  const confidenceLevel = 'The confidnce level is: ' + (responseJson.confidence * 100).toFixed(2) + '%';
@@ -64,6 +74,7 @@ export default class App extends Component<Props> {
   takePic(){
     ImagePicker.showImagePicker({quality: 0.5} , (response)=>{
       console.log(response);
+
         const imgData = response.data
         const file = {
           uri: response.uri,
@@ -95,12 +106,16 @@ export default class App extends Component<Props> {
         console.log('prediction analysis was ran');
       })
 
-
+      let pic = {
+        uri: 'https://upload.wikimedia.org/wikipedia/commons/d/de/Bananavarieties.jpg'
+      };
 
 
   }
 
   render() {
+    const resizeMode = 'repeat';
+
     // fetch('https://z1wj4hjige.execute-api.us-west-2.amazonaws.com/Prod/invocations', {
     //   method: 'POST',
     //   body: JSON.stringify({
@@ -122,25 +137,39 @@ export default class App extends Component<Props> {
     //   console.error(error);
     // });
 
+
     return (
 
 
+
+//       <Image source={uri:''} style={{width: '100%', height: '100%'}}>
+// </Image>
+// <ImageBackground source={pic} style={{width: '100%', height: '100%'}}>
+//  </ImageBackground>
+
+
+
       <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to SneakerWiz!</Text>
+      <Image
+        style={{
+          position: 'absolute',
+          flex: 1,
+          resizeMode,
+        }}
+        source={require('./assets/sneakerBG.png')}
+      />
+            <Text style={styles.welcome}>Welcome to SneakerWiz!</Text>
         <TouchableOpacity onPress={this.takePic.bind(this)} >
-          <Text>Take Picture</Text>
-        </TouchableOpacity>
-        <TextInput
-                style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-                onChangeText={(text) => this.setState({text})}
-                value={this.state.text}
-              />
-          <Text>Your shoe is {this.state.shoePrediction} with a confidence of
-            {this.state.shoeConfidence}
+          <Text style={styles.makeCenter}>Take Picture</Text>
+          <Text style={styles.makeCenter} >{this.state.shoePrediction} {this.state.shoeConfidence}
           </Text>
+        </TouchableOpacity>
+
 
       </View>
+
     );
+
   }
 }
 
@@ -149,17 +178,26 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-
+    backgroundColor: '#F5FCFF'
   },
   welcome: {
     fontSize: 20,
     textAlign: 'center',
+    color: 'yellow',
+    fontWeight: 'bold',
+    textShadowColor: 'black',
     margin: 10,
+    textDecorationStyle: 'double'
+
   },
   instructions: {
     textAlign: 'center',
     color: '#333333',
     marginBottom: 5,
   },
+  makeCenter: {
+    fontSize: 15,
+    textAlign: 'center',
+    margin: 10,
+  }
 });
