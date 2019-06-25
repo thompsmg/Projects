@@ -156,7 +156,7 @@ export default class App extends Component<Props> {
           flex: 1,
           resizeMode,
         }}
-        source={require('./assets/sneakerBG.png')}
+        source={require('./assets/sneakerBG2.png')}
       />
             <Text style={styles.welcome}>Welcome to SneakerWiz!</Text>
         <TouchableOpacity onPress={this.takePic.bind(this)} >
