@@ -9,7 +9,6 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, TouchableOpacity, View, Image, ImageBackground, TextInput} from 'react-native';
 import ImagePicker from 'react-native-image-picker';
-import { RNS3 } from 'react-native-aws3';
 
 
 
@@ -27,8 +26,6 @@ export default class App extends Component<Props> {
   constructor(props) {
     super(props);
     this.state = { text: 'sup',
-                      shoeName: null,
-                      shoeLevel: null,
                     shoePrediction: null,
                   shoeConfidence: null,
                 isLoading: false,
@@ -36,24 +33,16 @@ export default class App extends Component<Props> {
   }
 
   clearText(){
-    // this.state = {
-    //   shoePrediction:null,
-    //   shoeConfidence:null
-    // };
-    this.setState({
-      shoePrediction: null,
-      shoeConfidence: null
-      })
-
+    this.state = {
+      shoePrediction:null,
+      shoeConfidence:null
+    }
   }
   runShoePredict(shoe){
       fetch('https://z1wj4hjige.execute-api.us-west-2.amazonaws.com/Prod/invocations', {
       method: 'POST',
       body: JSON.stringify({
-        // url: 'https://d3volmxa3y6u91.cloudfront.net/'+shoe
-        // url: 'https://d3volmxa3y6u91.cloudfront.net/cropped_images/presto_OW_test.jpg' //99.89%
-        url:'https://d3volmxa3y6u91.cloudfront.net/test_images/presto_OW_test.jpg' // 66.15%
-        // url:'https://d3volmxa3y6u91.cloudfront.net/cropped_images/b4b54986-7256-4a2b-a27f-2fe4a6ecfa17.jpg'
+        url: 'https://d3volmxa3y6u91.cloudfront.net/'+shoe
       })
       })
       .then((response) => response.json())
@@ -66,14 +55,9 @@ export default class App extends Component<Props> {
       // }
       this.setState({
         isLoading: false,
-        shoeName: responseJson.class,
-        shoeLevel: responseJson.confidence,
         shoePrediction: ('your shoe is the ' + (responseJson.class)),
         shoeConfidence: (' we are ' + (responseJson.confidence * 100).toFixed(2) + '% confident')
         })
-
-        console.log(responseJson.class);
-        this.showShoe();
       //  const shoeResults = 'The shoes are: ' + responseJson.class;
       //  const confidenceLevel = 'The confidnce level is: ' + (responseJson.confidence * 100).toFixed(2) + '%';
       //
@@ -84,21 +68,6 @@ export default class App extends Component<Props> {
     .catch((error) => {
       console.error(error);
     });
-  }
-
-  // clear(){
-  //   this.state.shoePrediction = null;
-  //   // this.state.shoeConfidence
-  // }
-
-  showShoe(){
-    if (this.state.shoeLevel > .90) {
-      console.log(this.state.shoeLevel)
-      console.log('this is shoe is a success');
-    } else {
-      console.log(this.state.shoeLevel)
-      console.log('failure');
-    }
   }
 
   takePic(){
@@ -139,10 +108,6 @@ export default class App extends Component<Props> {
       let pic = {
         uri: 'https://upload.wikimedia.org/wikipedia/commons/d/de/Bananavarieties.jpg'
       };
-
-      // let shoe = {
-      //   uri: this.state.shoePic
-      // }
 
 
   }
@@ -197,10 +162,6 @@ export default class App extends Component<Props> {
           <Text style={styles.makeCenter}>Take Picture</Text>
           <Text style={styles.makeCenter} >{this.state.shoePrediction} {this.state.shoeConfidence}
           </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress = {this.clearText.bind(this)}>
-        <Text style={styles.makeCenter}> Clear </Text>
         </TouchableOpacity>
 
 
